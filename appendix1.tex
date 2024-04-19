@@ -1,0 +1,708 @@
+\section{ヘヴィサイドの階段関数のフーリエ変換}
+
+\label{sec:step_fourier}
+
+シュレディンガー方程式のグリーン関数の導出のために
+ヘヴィサイドの階段関数$\Theta(x)$に対するフーリエ変換を求める。
+定義は次のとおり。
+\begin{equation}
+  \Theta(x)=
+  \begin{cases}
+    1   & (x>0) \\
+    1/2 & (x=0) \\
+    0   & (x<0)
+  \end{cases}
+\end{equation}
+
+ヘヴィサイドの階段関数$\Theta(x)$に対するフーリエ変換は次のとおり。
+\begin{equation}
+  \label{eq:step_fourier_integral}
+  \tilde{\Theta}(k)
+  \equiv \int_{-\infty}^\infty\d x\,e^{-ikx}\,\Theta(x)
+  =\int_0^\infty\d x\,e^{-ikx}
+\end{equation}
+ここで$\tilde{\Theta}(k=0)=\infty$の特異点があることに気を付ける。
+そこでこの特異点を除いた$k\neq0$でフーリエ変換を評価し、
+フーリエ逆変換時に元のヘヴィサイドの階段関数に戻るよう特異点の取り扱いを決める。
+
+関数$\tilde{\Theta}(k)\,(k\neq0)$の評価を
+図~(\ref{fig:step_fourier})に示す経路に対して
+$R\rightarrow\infty$とした積分経路で行う。
+ただし$k>0$については左図の経路で、
+$k<0$については右図の経路である。
+% textlint-disable
+\begin{figure}[tbp]
+  \begin{minipage}[b]{0.45\linewidth}
+    \begin{center}
+      \begin{tikzpicture}[
+          arrow/.style={
+              postaction={
+                  decorate,
+                  decoration={
+                      markings,
+                      mark=at position #1 with {\arrow{stealth}}
+                    }
+                }
+            },label2/.style 2 args={
+              pos/.style={
+                  postaction={
+                      decorate,
+                      decoration={
+                          markings,
+                          mark=at position ##1 with \node #2;
+                        }
+                    }
+                }
+            },label/.style={
+              label2={1}{#1}
+            },pos/.default=.5
+          ,arrow/.default=.5
+        ]
+        % 複素数平面の軸の描画
+        \draw[-{Stealth}] (-1,0) -- (5.5,0) node[right]{$\Re z$};
+        \draw[-{Stealth}] (0,-3.5) -- (0,1) node[above]{$\Im z$};
+
+        % 座標の定義
+        \coordinate (origin) at (0, 0);
+        \draw (origin) node[below left]{O};
+        \coordinate (R_cutoff) at (4, 0);
+        \draw (R_cutoff) node[above] {$z=R$};
+        \coordinate (angle_endpoint) at ({4/sqrt(2)}, {-4/sqrt(2)});
+        \draw (angle_endpoint) node[below] {$z=Re^{-i\theta_0}$};
+
+        % 実軸上の経路
+        \draw[
+          very thick,
+          arrow
+        ] (origin) -- (R_cutoff) node[midway,above] {$I_1$};
+        % 円弧経路
+        \draw[
+        very thick,
+        domain=0:-45,
+        variable=\t,
+        label={[below right]{$\Gamma_R$}},
+        pos={.25},
+        label={[below right]{$z=Re^{-i\theta}$}},
+        pos={.60},
+        arrow=.75
+        ] plot ({4*cos(\t)},{4*sin(\t)});%pos,arrowの両方ともに省略していない
+        % 原点に戻る経路
+        \draw[
+        very thick,
+        label={[below left]{$z=re^{-i\theta_0}$}},
+        pos={.25},
+        label={[above right]{$I_2$}},
+        pos={.5},
+        arrow=.5,
+        ]  (angle_endpoint) -- (origin) node[midway,above] {};
+
+      \end{tikzpicture}
+    \end{center}
+  \end{minipage}
+  \begin{minipage}[b]{0.45\linewidth}
+    \begin{center}
+      \begin{tikzpicture}[
+          arrow/.style={
+              postaction={
+                  decorate,
+                  decoration={
+                      markings,
+                      mark=at position #1 with {\arrow{stealth}}
+                    }
+                }
+            },label2/.style 2 args={
+              pos/.style={
+                  postaction={
+                      decorate,
+                      decoration={
+                          markings,
+                          mark=at position ##1 with \node #2;
+                        }
+                    }
+                }
+            },label/.style={
+              label2={1}{#1}
+            },pos/.default=.5
+          ,arrow/.default=.5
+        ]
+        % 複素数平面の軸の描画
+        \draw[-{Stealth}] (-1,0) -- (5.5,0) node[right]{$\Re z$};
+        \draw[-{Stealth}] (0,-1) -- (0,3.5) node[above]{$\Im z$};
+
+        % 座標の定義
+        \coordinate (origin) at (0, 0);
+        \draw (origin) node[above left]{O};
+        \coordinate (R_cutoff) at (4, 0);
+        \draw (R_cutoff) node[below] {$z=R$};
+        \coordinate (angle_endpoint) at ({4/sqrt(2)}, {4/sqrt(2)});
+        \draw (angle_endpoint) node[above] {$z=Re^{i\theta_0}$};
+
+        % 実軸上の経路
+        \draw[
+          very thick,
+          arrow
+        ] (origin) -- (R_cutoff) node[midway,above] {$I_1$};
+        % 円弧経路
+        \draw[
+        very thick,
+        domain=0:45,
+        variable=\t,
+        label={[above right]{$\Gamma_R$}},
+        pos={.25},
+        label={[above right]{$z=Re^{i\theta}$}},
+        pos={.60},
+        arrow=.75
+        ] plot ({4*cos(\t)},{4*sin(\t)});%pos,arrowの両方ともに省略していない
+        % 原点に戻る経路
+        \draw[
+        very thick,
+        label={[above left]{$z=re^{i\theta_0}$}},
+        pos={.25},
+        label={[below right]{$I_2$}},
+        pos={.5},
+        arrow=.5,
+        ]  (angle_endpoint) -- (origin);
+
+      \end{tikzpicture}
+    \end{center}
+  \end{minipage}
+  \caption{ヘヴィサイドの階段関数に対するフーリエ変換の積分経路}\label{fig:step_fourier}
+\end{figure}
+(\ref{eq:step_fourier_integral})式の被積分関数は
+変数$x$について正則であるため、
+コーシーの積分定理より図~(\ref{fig:step_fourier})の経路での巡回積分は0になる。
+つまり次が成り立つ。
+\begin{equation}
+  \begin{split}
+    &\int_{I_1+\Gamma_R+I_2}\d z\,e^{-ikz}=0 \\
+    &\int_{I_1}\d z\,e^{-ikz}
+    =-\int_{\Gamma_R+I_2}\d z\,e^{-ikz} \\
+    &\tilde{\Theta}(k)
+    =\lim_{R\rightarrow\infty}\int_{I_1}\d z\,e^{-ikz}
+    =-\lim_{R\rightarrow\infty}\int_{\Gamma_R+I_2}\d z\,e^{-ikz}
+  \end{split}
+\end{equation}
+このうち経路$\Gamma_R$についての積分は三角不等式で0になることが
+次により確かめられる。
+\begin{equation}
+  \begin{split}
+    &\lim_{R\rightarrow\infty}\ab|\int_{\Gamma_R}\d z\,e^{-ikz}|
+    =\lim_{R\rightarrow\infty}\ab|\int_{\Gamma_R}\d(Re^{i\theta})\,
+    e^{-ikR(\cos\theta\mp i\sin\theta)}| \\
+    &=\lim_{R\rightarrow\infty}
+    R\ab|\int_0^{\theta_0}\d\theta\,
+    ie^{i\theta}e^{-ikR\cos\theta\mp kR\sin\theta}|
+    \leq\lim_{R\rightarrow\infty}
+    R \int_0^{\theta_0}\d\theta\,
+    e^{-|k|R\sin\theta}
+  \end{split}
+\end{equation}
+$0\leq\theta\leq\frac{\pi}{2}$において
+$\sin\theta$は上に凸であるので次のように不等式評価ができる。
+\begin{equation}
+  \sin\theta\geq
+  \frac{1}{\pi/2}\theta
+  \Rightarrow
+  e^{-|k|R\sin\theta}
+  \leq
+  e^{-\frac{2|k|R\theta}{\pi}}
+\end{equation}
+指数関数の発散速度は多項式関数の発散速度より速いことを用いれば次が成立する。
+\begin{equation}
+  \begin{split}
+    &\lim_{R\rightarrow\infty}
+    \int_0^{\theta_0}\d\theta\,
+    e^{-R|k|\sin\theta}
+    \leq
+    \int_0^{\theta_0}\d\theta\,
+    e^{-\frac{2|k|R\theta}{\pi}} \\
+    &=\lim_{R\rightarrow\infty}\ab[
+    -\frac{\pi}{2|k|R}e^{-\frac{2|k|R\theta}{\pi}}
+    ]_{\theta=0}^{\theta=\theta_0}
+    =\lim_{R\rightarrow\infty}
+    \frac{\pi}{2|k|R}\ab(1-e^{-\frac{2|k|R\theta_0}{\pi}})
+    =0 \\
+    &\Rightarrow
+    \lim_{R\rightarrow\infty}\int_{\Gamma_R}\d z\,e^{-ikz}=0
+  \end{split}
+\end{equation}
+このように$k$に対して適切に上半面・下半面を選択し、
+無限遠において半径一定で回転する経路に対する積分が0と評価できることを
+ジョルダンの補題と呼ぶ。
+
+これよりヘヴィサイドの階段関数のフーリエ変換は
+$k\neq0$において次のように書ける。
+\begin{equation}
+  \begin{split}
+    \tilde{\Theta}(k)
+    &=-\lim_{R\rightarrow\infty}\int_{I_2}\d z\,e^{-ikz}
+    =\lim_{R\rightarrow\infty}\int_0^{Re^{\mp i\theta_0}}\d z\,e^{-ikz}
+    =\lim_{R\rightarrow\infty}
+    \ab[\frac{1}{-ik}e^{-ikz}]_{z=0}^{z=Re^{\mp i\theta_0}} \\
+    &=\frac{1}{ik}
+    -\lim_{R\rightarrow\infty}\frac{1}{ik}
+    e^{-ikR\cos\theta_0-|k|R\sin\theta_0}
+    =\frac{1}{ik}
+  \end{split}
+\end{equation}
+このフーリエ逆変換は$k=0$における特異点を避けるように定義する必要がある。
+元の関数に戻るように次を満たす積分経路を探す。
+\begin{equation}
+  \Theta(x)
+  =\frac{1}{2\pi}\int\d k\,e^{ikx}\,\frac{1}{ik}
+  =
+  \begin{cases}
+    1 & (x>0) \\
+    0 & (x<0) \\
+  \end{cases}
+\end{equation}
+試行錯誤することで図~\ref{fig:step_inv_fourier}で示すように
+$k=0$の孤立特異点の下を通るように積分経路をとればいいことがわかる。
+ただしジョルダンの補題を適用するために
+$x>0$において左図、$x<0$において右図の経路を選択する。
+% textlint-disable
+\begin{figure}[tbp]
+  \begin{minipage}[b]{0.45\linewidth}
+    \begin{center}
+      \begin{tikzpicture}[%詳細設定(気にしない)
+          arrow/.style={
+              postaction={
+                  decorate,
+                  decoration={
+                      markings,
+                      mark=at position #1 with {\arrow{stealth}}
+                    }
+                }
+            },label2/.style 2 args={
+              pos/.style={
+                  postaction={
+                      decorate,
+                      decoration={
+                          markings,
+                          mark=at position ##1 with \node #2;
+                        }
+                    }
+                }
+            },label/.style={
+              label2={1}{#1}
+            },pos/.default=.5
+          ,arrow/.default=.5
+        ]
+
+        % 複素数平面の軸の描画
+        \draw[-{Stealth}] (-3.2,0) -- (3.2,0) node[right]{$\Re k$};
+        \draw[-{Stealth}] (0,-1) -- (0,3.5) node[above]{$\Im k$};
+        % 原点の描画
+        \draw (0,0) node[below left]{O};
+
+        % 座標の定義
+        \coordinate (min_Rw) at (-2.5, 0);
+        \draw (min_Rw) node[below] {$k=-R$};
+        \coordinate (left_cutoff) at (-0.6, 0);
+        \coordinate (singular) at (0, 0);
+        \draw (singular) node[above=0.2cm] {$k=0$};
+        \coordinate (right_cutoff) at (0.6, 0);
+        \coordinate (max_Rw) at (2.5, 0);
+        \draw (max_Rw) node[below] {$k=R$};
+
+        % 特異点
+        \draw[
+          only marks,
+          mark=x,
+          mark size=4pt
+        ] plot (singular);
+
+        % 直線経路
+        \draw[
+          very thick,
+          arrow
+        ] (min_Rw) -- (left_cutoff) node[midway,above] {$I_1$};
+        \draw[
+          very thick,
+          arrow=.5
+        ]  (right_cutoff) -- (max_Rw) node[midway,above] {$I_2$};
+
+        % 円弧経路
+        \draw[
+        very thick,
+        domain=0:180,
+        variable=\t,
+        label={[above right]{$\Gamma_R$}},
+        pos={.25},
+        label={[above left]{$k=Re^{i\theta}$}},
+        pos={.75},
+        arrow=.75
+        ] plot ({2.5*cos(\t)},{2.5*sin(\t)});%pos,arrowの両方ともに省略していない
+
+        \draw[
+          very thick,
+          domain=-180:0,
+          variable=\t,
+          label={[below left]{$\Gamma_\epsilon$}},
+          pos={.25},
+          label={[below right]{$k=\epsilon e^{i\theta}$}},
+          pos={.75},
+          arrow=.5
+        ]  plot ({0.6*cos(\t)},{0.6*sin(\t)});%両方ともに省略していない
+      \end{tikzpicture}
+    \end{center}
+  \end{minipage}
+  \begin{minipage}[b]{0.45\linewidth}
+    \begin{center}
+      \begin{tikzpicture}[%詳細設定(気にしない)
+          arrow/.style={
+              postaction={
+                  decorate,
+                  decoration={
+                      markings,
+                      mark=at position #1 with {\arrow{stealth}}
+                    }
+                }
+            },label2/.style 2 args={
+              pos/.style={
+                  postaction={
+                      decorate,
+                      decoration={
+                          markings,
+                          mark=at position ##1 with \node #2;
+                        }
+                    }
+                }
+            },label/.style={
+              label2={1}{#1}
+            },pos/.default=.5
+          ,arrow/.default=.5
+        ]
+
+        % 複素数平面の軸の描画
+        \draw[-{Stealth}] (-3.2,0) -- (3.2,0) node[right]{$\Re k$};
+        \draw[-{Stealth}] (0,-3.5) -- (0,1) node[above]{$\Im k$};
+        % 原点の描画
+        \draw (0,0) node[below left]{O};
+
+        % 座標の定義
+        \coordinate (min_Rw) at (-2.5, 0);
+        \draw (min_Rw) node[above] {$k=-R$};
+        \coordinate (left_cutoff) at (-0.6, 0);
+        \coordinate (right_cutoff) at (0.6, 0);
+        \coordinate (max_Rw) at (2.5, 0);
+        \draw (max_Rw) node[above] {$k=R$};
+        \coordinate (singular) at (0, 0);
+        \draw (singular) node[above=0.2cm] {$k=0$};
+
+        % 特異点
+        \draw[
+          only marks,
+          mark=x,
+          mark size=4pt
+        ] plot (singular);
+
+        % 直線経路
+        \draw[
+          very thick,
+          arrow
+        ] (min_Rw) -- (left_cutoff) node[midway,above] {$I_1$};
+        \draw[
+          very thick,
+          arrow=.5
+        ]  (right_cutoff) -- (max_Rw) node[midway,above] {$I_2$};
+
+        % 円弧経路
+        \draw[
+        very thick,
+        domain=0:-180,
+        variable=\t,
+        label={[below right]{$\Gamma_R$}},
+        pos={.25},
+        label={[below left]{$k=Re^{i\theta}$}},
+        pos={.75},
+        arrow=.75
+        ] plot ({2.5*cos(\t)},{2.5*sin(\t)});%pos,arrowの両方ともに省略していない
+        \draw[
+          very thick,
+          domain=-180:0,
+          variable=\t,
+          label={[below left]{$\Gamma_\epsilon$}},
+          pos={.25},
+          label={[below right]{$k=\epsilon e^{-i\theta}$}},
+          pos={.75},
+          arrow=.5
+        ]  plot ({0.6*cos(\t)},{0.6*sin(\t)});%両方ともに省略していない
+
+      \end{tikzpicture}
+    \end{center}
+  \end{minipage}
+  \caption{ヘヴィサイドの階段関数の逆フーリエ変換における積分経路}\label{fig:step_inv_fourier}
+\end{figure}
+% textlint-enable
+周回積分は留数定理とコーシーの積分定理より次で評価できる。
+\begin{equation}
+  \frac{1}{2\pi}\oint\d k\,e^{ikx}\,\frac{1}{ik}
+  =
+  \begin{cases}
+    2\pi i\cdot\mathrm{Res}
+    \ab(\frac{1}{2\pi}e^{ikx}\,\frac{1}{ik},k=0)=1 & (x>0) \\
+    0                                              & (x<0) \\
+  \end{cases}
+\end{equation}
+周回積分はジョルダンの補題より
+$\tilde{\Theta}(k)$の$\Gamma_R$における積分は0となる。
+これは同様に三角不等式と$\sin\theta$に関する不等式評価より次の計算でわかる。
+ただし$x\neq0$とする。
+\begin{equation}
+  \begin{split}
+    &\lim_{R\rightarrow\infty}
+    \ab|\int_{\Gamma_R}\d k\,e^{ikx}\frac{1}{ik}|
+    =\lim_{R\rightarrow\infty}
+    \ab|\int_{\theta=0}^{\theta=\pi}
+    \d \ab(Re^{\pm i\theta})\,e^{ixR(\cos\theta\pm i\sin\theta)}\frac{1}{iRe^{\pm i\theta}}| \\
+    &\leq\lim_{R\rightarrow\infty}
+    \int_0^\pi\d\theta
+    \ab|e^{ixR\cos\theta-|x|R\sin\theta}|
+    =\lim_{R\rightarrow\infty}
+    \int_0^\pi\d\theta\,e^{-|x|R\sin\theta} \\
+    &\leq\lim_{R\rightarrow\infty}
+    \int_0^\pi\d\theta\,e^{-\frac{2|x|R\theta}{\pi}}
+    =\lim_{R\rightarrow\infty}
+    \ab[-\frac{\pi}{2|x|R}e^{-\frac{2|x|R\theta}{\pi}}]_{\theta=0}^{\theta=\pi} \\
+    &=\frac{\pi}{2|x|R}\ab(1-e^{-2|x|R})=0
+  \end{split}
+\end{equation}
+よって次を得る。
+\begin{equation}
+  \Theta(x)
+  =\lim_{\epsilon\rightarrow0}\lim_{R\rightarrow\infty}
+  \frac{1}{2\pi}\int_{I_1+\Gamma_\epsilon+I_2}\d k\,e^{ikx}\frac{1}{ik}
+\end{equation}
+ここ重要なのは積分経路に対して孤立特異点を$\Im k>0$より漸近させることであるので、
+次のような表記をすることもある。
+\begin{equation}
+  \label{eq:step_func_complex_fourier}
+  \begin{split}
+    &\Theta(x)
+    \equiv\lim_{\epsilon\rightarrow0}
+    \frac{1}{2\pi}\int_{-\infty}^\infty\d k\,e^{ikx}\frac{1}{i(k-i\epsilon)}
+    \equiv\frac{1}{2\pi}\int_{-\infty}^\infty\d k\,e^{ikx}\frac{1}{i(k-i0)} \\
+    &=\frac{i}{2\pi}\int_{-\infty}^\infty\d k\,e^{-ikx}\frac{1}{k+i0} \\
+  \end{split}
+\end{equation}
+
+
+% そこでヘヴィサイドの階段関数に対して次の正則化を考える。
+% \begin{equation}
+%   \Theta_\epsilon(x)=
+%   \begin{cases}
+%     e^{-\epsilon x} & (x>0) \\
+%     1/2             & (x=0) \\
+%     0               & (x<0)
+%   \end{cases},
+%   \qquad
+%   \Theta(x)=\lim_{\epsilon\rightarrow0}\Theta_\epsilon(x)
+% \end{equation}
+% このフーリエ変換は次で評価できる。
+% \begin{equation}
+%   \tilde{\Theta}_\epsilon(k)
+%   \equiv \int_{-\infty}^\infty\d x\,e^{-ikx}\,\Theta_\epsilon(x)
+%   =\int_0^\infty\d x\,e^{-ikx-\epsilon x}
+%   =\ab[
+%   \frac{1}{-i(k-i\epsilon)}e^{-ikx}e^{-\epsilon x}
+%   ]_{x=0}^{x=\infty}
+%   =\frac{1}{i(k-i\epsilon)}
+% \end{equation}
+% これよりヘヴィサイドの階段関数はフーリエ逆変換を用いて次のように書ける。
+% \begin{equation}
+%   \Theta(x)
+%   =\lim_{\epsilon\rightarrow0}\Theta_\epsilon(x)
+%   =\lim_{\epsilon\rightarrow0}
+%   \int_{-\infty}^\infty\d k\,
+%   \frac{e^{ikx}}{2\pi}\,\frac{1}{i(k-i\epsilon)}
+% \end{equation}
+% これは$\Theta_\epsilon(x)$による正則化と整合的である。
+% % textlint-disable
+% \begin{figure}[tbp]
+%   \begin{center}
+%     \begin{tikzpicture}[%詳細設定(気にしない)
+%         arrow/.style={
+%             postaction={
+%                 decorate,
+%                 decoration={
+%                     markings,
+%                     mark=at position #1 with {\arrow{stealth}}
+%                   }
+%               }
+%           },label2/.style 2 args={
+%             pos/.style={
+%                 postaction={
+%                     decorate,
+%                     decoration={
+%                         markings,
+%                         mark=at position ##1 with \node #2;
+%                       }
+%                   }
+%               }
+%           },label/.style={
+%             label2={1}{#1}
+%           },pos/.default=.5
+%         ,arrow/.default=.5
+%       ]
+
+%       % 複素数平面の軸の描画
+%       \draw[-{Stealth}] (-4.5,0) -- (4.5,0) node[right]{$\Re k$};
+%       \draw[-{Stealth}] (0,-1) -- (0,3.5) node[above]{$\Im k$};
+
+%       % 座標の定義
+%       \draw (0,0) node[below left]{O};
+
+%       \coordinate (min_Rw) at (-3, 0);
+%       \draw (min_Rw) node[below] {$k=-R$};
+
+%       \coordinate (max_Rw) at (3, 0);
+%       \draw (max_Rw) node[below] {$k=R$};
+
+%       % 特異点
+%       \coordinate (singular) at (0, 0.5);
+%       \draw[
+%         only marks,
+%         mark=x,
+%         mark size=4pt
+%       ] plot (singular);
+%       \draw (singular) node[above right] {$k=i\epsilon$};
+
+%       % 直線経路
+%       \draw[
+%         very thick,
+%         label={[below]{$I_1$}},
+%         pos={.75},
+%         arrow=.75
+%       ] (min_Rw) -- (max_Rw);
+
+%       % 円弧経路
+%       \draw[
+%       very thick,
+%       domain=0:180,
+%       variable=\t,
+%       label={[above right]{$\Gamma_R$}},
+%       pos={.25},
+%       label={[above left]{$k=Re^{i\theta}$}},
+%       pos={.75},
+%       arrow=.75
+%       ] plot ({3*cos(\t)},{3*sin(\t)});%pos,arrowの両方ともに省略していない
+
+%     \end{tikzpicture}
+%     \caption{ヘヴィサイドの階段関数に関する逆フーリエ変換の積分経路$(x>0)$}\label{fig:step_inv_fourier_positive}
+%   \end{center}
+% \end{figure}
+% % textlint-enable
+% % textlint-disable
+% \begin{figure}[tbp]
+%   \begin{center}
+%     \begin{tikzpicture}[%詳細設定(気にしない)
+%         arrow/.style={
+%             postaction={
+%                 decorate,
+%                 decoration={
+%                     markings,
+%                     mark=at position #1 with {\arrow{stealth}}
+%                   }
+%               }
+%           },label2/.style 2 args={
+%             pos/.style={
+%                 postaction={
+%                     decorate,
+%                     decoration={
+%                         markings,
+%                         mark=at position ##1 with \node #2;
+%                       }
+%                   }
+%               }
+%           },label/.style={
+%             label2={1}{#1}
+%           },pos/.default=.5
+%         ,arrow/.default=.5
+%       ]
+
+%       % 複素数平面の軸の描画
+%       \draw[-{Stealth}] (-4.5,0) -- (4.5,0) node[right]{$\Re k$};
+%       \draw[-{Stealth}] (0,-3.5) -- (0,2) node[above]{$\Im k$};
+
+%       % 座標の定義
+%       \draw (0,0) node[below left]{O};
+
+%       \coordinate (min_Rw) at (-3, 0);
+%       \draw (min_Rw) node[above] {$k=-R$};
+
+%       \coordinate (max_Rw) at (3, 0);
+%       \draw (max_Rw) node[above] {$k=R$};
+
+%       % 特異点
+%       \coordinate (singular) at (0, 0.5);
+%       \draw[
+%         only marks,
+%         mark=x,
+%         mark size=4pt
+%       ] plot (singular);
+%       \draw (singular) node[above right] {$k=i\epsilon$};
+
+%       % 直線経路
+%       \draw[
+%         very thick,
+%         label={[above]{$I_1$}},
+%         pos={.75},
+%         arrow=.75
+%       ] (min_Rw) -- (max_Rw);
+
+%       % 円弧経路
+%       \draw[
+%       very thick,
+%       domain=0:-180,
+%       variable=\t,
+%       label={[below right]{$\Gamma_R$}},
+%       pos={.25},
+%       label={[below left]{$k=Re^{i\theta}$}},
+%       pos={.75},
+%       arrow=.75
+%       ] plot ({3*cos(\t)},{3*sin(\t)});%pos,arrowの両方ともに省略していない
+
+%     \end{tikzpicture}
+%     \caption{ヘヴィサイドの階段関数に関する逆フーリエ変換の積分経路$(x<0)$}\label{fig:step_inv_fourier_negative}
+%   \end{center}
+% \end{figure}
+% % textlint-enable
+% 複素積分によりフーリエ変換による表示がヘヴィサイドの階段関数の定義と合致することが分かる。
+% ジョルダンの補題により$x>0$については図~(\ref{fig:step_inv_fourier_positive})による経路で、
+% $x<0$については図~(\ref{fig:step_inv_fourier_negative})による経路で積分を定める。
+% コーシーの積分定理と留数定理は次のように書ける。
+% \begin{equation}
+%   \begin{split}
+%     \oint\d k\frac{e^{ikx}}{2\pi}\frac{1}{i(k-i\epsilon)}
+%     =
+%     \begin{cases}
+%       2\pi i\cdot\mathrm{Res}\ab(\frac{e^{ikx}}{2\pi}\frac{1}{i(k-i\epsilon)},k=i\epsilon)
+%       =e^{-x\epsilon} & (x>0) \\
+%       0               & (x<0)
+%     \end{cases}
+%   \end{split}
+% \end{equation}
+% これより極限から次がわかる。
+% \begin{equation}
+%   \begin{split}
+%     \lim_{\epsilon\rightarrow0}
+%     \oint\d k\frac{e^{ikx}}{2\pi}\frac{1}{i(k-i\epsilon)}
+%     =
+%     \begin{cases}
+%       1 & (x>0) \\
+%       0 & (x<0)
+%     \end{cases}
+%   \end{split}
+% \end{equation}
+% ここで三角不等式から次がわかる。
+% \begin{equation}
+%   \begin{split}
+%     \lim_{\epsilon\rightarrow0}\lim_{R\rightarrow\infty}
+%     \ab|\int_{\Gamma_R}\d k\frac{e^{ikx}}{2\pi}\frac{1}{i(k-i\epsilon)}|
+%     =\lim_{\epsilon\rightarrow0}\lim_{R\rightarrow\infty}
+%     \ab|\int_0^\pi
+%     \d\theta iRe^{i\theta}
+%     \frac{e^{iRx(\cos\theta+i\sin\theta)}}{2\pi}\frac{1}{i(Re^{i\theta}-i\epsilon)}|
+%   \end{split}
+% \end{equation}
