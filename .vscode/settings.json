@@ -6,7 +6,8 @@
     // json でコメント有効化
     "files.associations": {
         "*.json": "jsonc",
-        ".textlintrc": "jsonc"
+        ".textlintrc": "jsonc",
+        ".latexmkrc": "perl"
     },
     //----------//
     // textlint //
@@ -16,39 +17,5 @@
     //-------//
     // LaTeX //
     //-------//
-    // タイプセット定義
-    "latex-workshop.latex.recipes": [
-        {
-            "name": "lualatex",
-            "tools": [
-                "lualatex",
-                "bibtex",
-                "lualatex",
-                "lualatex"
-            ]
-        },
-    ],
-    // コマンド定義
-    "latex-workshop.latex.tools": [
-        {
-            "name": "lualatex",
-            "command": "lualatex",
-            "args": [
-                "--cmdx",
-                "-file-line-error",
-                "-synctex=1",
-                "-interaction=nonstopmode",
-                "-halt-on-error",
-                "%DOC_EXT%"
-            ],
-            "env": {}
-        },
-        {
-            "name": "bibtex",
-            "command": "bibtex",
-            "args": [
-                "%DOCFILE%"
-            ]
-        }
-    ],
+    "latex-workshop.latex.recipe.default": "latexmk (latexmkrc)",
 }

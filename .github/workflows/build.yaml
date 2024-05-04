@@ -1,0 +1,28 @@
+# from https://qiita.com/aaaKUKIaaa/items/e373e2e55f96d8c5c1ed
+name: compile LaTeX and release PDF
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@v2
+      - name: Compile latex document
+        uses: ./.github/actions
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Release & upload asset
+        id: create_release-upload_assets
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: ./main.pdf
+          draft: false
+          prerelease: false
