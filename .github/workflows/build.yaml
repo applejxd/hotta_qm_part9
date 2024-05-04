@@ -1,6 +1,7 @@
 # from https://qiita.com/aaaKUKIaaa/items/e373e2e55f96d8c5c1ed
 name: compile LaTeX and release PDF
 
+# タグを付与して push したら実行
 on:
   push:
     tags:
@@ -11,12 +12,15 @@ jobs:
     name: Build
     runs-on: ubuntu-20.04
     steps:
+      # Checkout
       - name: Set up Git repository
         uses: actions/checkout@v2
+      # CI
       - name: Compile latex document
         uses: ./.github/actions
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # CD
       - name: Create Release & upload asset
         id: create_release-upload_assets
         uses: softprops/action-gh-release@v1

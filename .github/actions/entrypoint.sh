@@ -5,5 +5,5 @@ set -eux
 
 # build pdf
 latexmk -C
-latexmk /app/main.tex
+latexmk main.tex
 latexmk -c
